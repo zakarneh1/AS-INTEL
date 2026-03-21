@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { FALLBACK_INSIGHTS_DATA } from '../lib/fallbackData';
 import { 
     Lightbulb, 
     TrendUp, 
@@ -28,7 +29,9 @@ import {
     DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = process.env.REACT_APP_BACKEND_URL
+  ? `${process.env.REACT_APP_BACKEND_URL}/api`
+  : 'http://localhost:8000/api';
 
 const categoryIcons = {
     'Geographic Analysis': MapPin,
@@ -122,8 +125,9 @@ const InsightSkeleton = () => (
 );
 
 export default function Insights() {
-    const [insights, setInsights] = useState([]);
+    const [insights, setInsights] = useState(FALLBACK_INSIGHTS_DATA);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [filter, setFilter] = useState('all');
 
     useEffect(() => {
@@ -133,6 +137,7 @@ export default function Insights() {
                 setInsights(response.data);
             } catch (error) {
                 console.error('Error fetching insights:', error);
+                setError('Unable to load insights data. Check backend URL and CORS.');
             } finally {
                 setLoading(false);
             }
@@ -212,8 +217,37 @@ export default function Insights() {
         doc.save('salama_as_insights_report.pdf');
     };
 
+    const downloadCsv = (rows, headers, filename) => {
+        let csvContent = headers.join(',') + '\n';
+        rows.forEach(row => {
+            csvContent += row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(',') + '\n';
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const handleExportCSV = () => {
-        window.open(`${API}/export/insights/csv`, '_blank');
+        if (!error) {
+            window.open(`${API}/export/insights/csv`, '_blank');
+            return;
+        }
+
+        const rows = insights.map(ins => [
+            ins.id,
+            ins.category,
+            ins.title,
+            ins.impact,
+            ins.metric_value || '',
+            ins.recommendation,
+            ins.description,
+        ]);
+
+        downloadCsv(rows, ['id', 'category', 'title', 'impact', 'metric_value', 'recommendation', 'description'], 'salama_insights_fallback.csv');
     };
 
     const filteredInsights = filter === 'all' 
@@ -225,6 +259,12 @@ export default function Insights() {
     return (
         <div className="page-container">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                {error && (
+                    <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                        <p className="font-semibold">{error}</p>
+                        <p className="text-sm">Using local fallback insights data while backend is unavailable.</p>
+                    </div>
+                )}
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
                     <div>

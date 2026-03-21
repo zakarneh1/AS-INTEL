@@ -2,7 +2,10 @@ from fastapi import FastAPI, APIRouter
 from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+try:
+    from motor.motor_asyncio import AsyncIOMotorClient
+except ImportError:
+    AsyncIOMotorClient = None
 import os
 import logging
 from pathlib import Path
@@ -18,12 +21,17 @@ load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-try:
-    client = AsyncIOMotorClient(mongo_url)
-    db = client[os.environ.get('DB_NAME', 'test_database')]
-except Exception as e:
-    logging.warning(f"MongoDB connection failed: {e}. Running in read-only mode with static data.")
-    db = None
+db = None
+client = None
+if AsyncIOMotorClient is None:
+    logging.warning('motor is not installed; running in read-only mode with static data.')
+else:
+    try:
+        client = AsyncIOMotorClient(mongo_url)
+        db = client[os.environ.get('DB_NAME', 'test_database')]
+    except Exception as e:
+        logging.warning(f"MongoDB connection failed: {e}. Running in read-only mode with static data.")
+        db = None
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -616,4 +624,5 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    if client is not None:
+        client.close()

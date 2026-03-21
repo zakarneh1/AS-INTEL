@@ -14,6 +14,14 @@ import {
     Area,
     AreaChart
 } from 'recharts';
+import {
+    FALLBACK_KPIS,
+    FALLBACK_REVENUE_DATA,
+    FALLBACK_PRODUCTS_DATA,
+    FALLBACK_STATES_DATA,
+    FALLBACK_SEGMENTS_DATA,
+    FALLBACK_PAYMENTS_DATA,
+} from '../lib/fallbackData';
 import { 
     CurrencyDollar, 
     ShoppingCart, 
@@ -36,7 +44,9 @@ import { Skeleton } from '../components/ui/skeleton';
 import { Button } from '../components/ui/button';
 import { useTheme } from '../context/ThemeContext';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = process.env.REACT_APP_BACKEND_URL
+  ? `${process.env.REACT_APP_BACKEND_URL}/api`
+  : 'http://localhost:8000/api';
 
 const CHART_COLORS = {
     light: {
@@ -191,15 +201,16 @@ export default function Dashboard() {
     const { theme } = useTheme();
     const colors = CHART_COLORS[theme];
     
-    const [kpis, setKpis] = useState(null);
-    const [revenueData, setRevenueData] = useState([]);
-    const [filteredRevenueData, setFilteredRevenueData] = useState([]);
-    const [productsData, setProductsData] = useState([]);
-    const [statesData, setStatesData] = useState([]);
-    const [filteredStatesData, setFilteredStatesData] = useState([]);
-    const [segmentsData, setSegmentsData] = useState([]);
-    const [paymentsData, setPaymentsData] = useState([]);
+    const [kpis, setKpis] = useState(FALLBACK_KPIS);
+    const [revenueData, setRevenueData] = useState(FALLBACK_REVENUE_DATA);
+    const [filteredRevenueData, setFilteredRevenueData] = useState(FALLBACK_REVENUE_DATA);
+    const [productsData, setProductsData] = useState(FALLBACK_PRODUCTS_DATA);
+    const [statesData, setStatesData] = useState(FALLBACK_STATES_DATA);
+    const [filteredStatesData, setFilteredStatesData] = useState(FALLBACK_STATES_DATA);
+    const [segmentsData, setSegmentsData] = useState(FALLBACK_SEGMENTS_DATA);
+    const [paymentsData, setPaymentsData] = useState(FALLBACK_PAYMENTS_DATA);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     
     // Filters
     const [year, setYear] = useState('all');
@@ -228,6 +239,8 @@ export default function Dashboard() {
                 setPaymentsData(paymentsRes.data);
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
+                setError('Unable to load dashboard data from the backend; using local fallback values.');
+                // fallback is already set in initial state
             } finally {
                 setLoading(false);
             }
@@ -254,8 +267,34 @@ export default function Dashboard() {
         }
     }, [state, statesData]);
 
+    const downloadCsv = (rows, headers, filename) => {
+        let csvContent = headers.join(',') + '\n';
+        rows.forEach(row => {
+            csvContent += row.map(val => `"${val}"`).join(',') + '\n';
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const handleExportCSV = () => {
-        window.open(`${API}/export/dashboard/csv`, '_blank');
+        if (!error) {
+            window.open(`${API}/export/dashboard/csv`, '_blank');
+            return;
+        }
+
+        const rows = revenueData.map(d => [
+            d.month,
+            d.year,
+            d.revenue,
+            d.orders,
+        ]);
+
+        downloadCsv(rows, ['month', 'year', 'revenue', 'orders'], 'salama_dashboard_fallback.csv');
     };
 
     const formatCurrency = (value) => {
@@ -293,6 +332,12 @@ export default function Dashboard() {
 
     return (
         <div className="page-container">
+            {error && (
+                <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+                    <p className="font-semibold">{error}</p>
+                    <p className="text-sm">Check backend URL and CORS in environment settings. Dashboard uses in-app fallback data until API is reachable.</p>
+                </div>
+            )}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
