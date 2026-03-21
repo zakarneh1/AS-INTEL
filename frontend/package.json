@@ -63,8 +63,9 @@
   },
   "scripts": {
     "start": "node ./node_modules/@craco/craco/dist/index.js start",
-    "build": "react-scripts build",
-    "test": "node ./node_modules/@craco/craco/dist/index.js test"
+    "build": "npx react-scripts build",
+    "test": "node ./node_modules/@craco/craco/dist/index.js test",
+    "postinstall": "chmod +x node_modules/.bin/* 2>/dev/null || true"
   },
   "browserslist": {
     "production": [
