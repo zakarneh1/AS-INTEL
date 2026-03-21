@@ -216,40 +216,50 @@ export default function Dashboard() {
     const [year, setYear] = useState('all');
     const [state, setState] = useState('all');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-               const API = process.env.REACT_APP_BACKEND_URL || 'https://as-intel.onrender.com/api';
+useEffect(() => {
+    const fetchData = async () => {
+        setLoading(true);
+        setError('');
 
-const [kpisRes, revenueRes, productsRes, statesRes, segmentsRes, paymentsRes] = await Promise.all([
-    axios.get(`${API}/dashboard/kpis`),
-    axios.get(`${API}/dashboard/revenue`),
-    axios.get(`${API}/dashboard/products`),
-    axios.get(`${API}/dashboard/states`),
-    axios.get(`${API}/dashboard/segments`),
-    axios.get(`${API}/dashboard/payments`)
-]);
-                
-                setKpis(kpisRes.data);
-                setRevenueData(revenueRes.data);
-                setFilteredRevenueData(revenueRes.data);
-                setProductsData(productsRes.data);
-                setStatesData(statesRes.data);
-                setFilteredStatesData(statesRes.data);
-                setSegmentsData(segmentsRes.data);
-                setPaymentsData(paymentsRes.data);
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-                setError('Unable to load dashboard data from the backend; using local fallback values.');
-                // fallback is already set in initial state
-            } finally {
-                setLoading(false);
-            }
-        };
+        try {
+            // Make sure API is only the base URL
+            const API = process.env.REACT_APP_BACKEND_URL || 'https://as-intel.onrender.com/api';
 
-        fetchData();
-    }, []);
+            const [
+                kpisRes,
+                revenueRes,
+                productsRes,
+                statesRes,
+                segmentsRes,
+                paymentsRes
+            ] = await Promise.all([
+                axios.get(`${API}/dashboard/kpis`),
+                axios.get(`${API}/dashboard/revenue`),
+                axios.get(`${API}/dashboard/products`),
+                axios.get(`${API}/dashboard/states`),
+                axios.get(`${API}/dashboard/segments`),
+                axios.get(`${API}/dashboard/payments`)
+            ]);
+
+            setKpis(kpisRes.data);
+            setRevenueData(revenueRes.data);
+            setFilteredRevenueData(revenueRes.data);
+            setProductsData(productsRes.data);
+            setStatesData(statesRes.data);
+            setFilteredStatesData(statesRes.data);
+            setSegmentsData(segmentsRes.data);
+            setPaymentsData(paymentsRes.data);
+        } catch (err) {
+            console.error('Error fetching dashboard data:', err);
+            setError('Unable to load dashboard data from the backend; using fallback values.');
+            // fallback data is already in initial state
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchData();
+}, []);
 
     // Filter revenue data when year changes
     useEffect(() => {
