@@ -152,7 +152,7 @@ export const ChatWidget = () => {
                     <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
                         <div className="flex items-center gap-2">
                             <Sparkle size={20} weight="fill" />
-                            <span className="font-semibold text-sm">Salama AS Assistant</span>
+                            <span className="font-semibold text-sm">AS Intelligence Assistant</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <button
