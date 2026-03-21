@@ -147,7 +147,7 @@ export default function Insights() {
         // Title
         doc.setFontSize(20);
         doc.setTextColor(0, 47, 167);
-        doc.text('Salama Intelligence - Business Insights Report', 14, 20);
+        doc.text('Salama AS - Business Insights Report', 14, 20);
         
         // Subtitle
         doc.setFontSize(10);
@@ -209,7 +209,7 @@ export default function Insights() {
             yPos += recLines.length * 4 + 10;
         });
         
-        doc.save('salama_intelligence_insights_report.pdf');
+        doc.save('salama_as_insights_report.pdf');
     };
 
     const handleExportCSV = () => {

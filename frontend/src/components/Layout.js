@@ -37,7 +37,7 @@ export const Layout = ({ children }) => {
                         {/* Logo */}
                         <Link to="/" className="flex items-center gap-2" data-testid="logo-link">
                             <ChartLine size={28} weight="bold" className="text-primary" />
-                            <span className="font-bold text-lg hidden sm:block">Salama Intelligence</span>
+                            <span className="font-bold text-lg hidden sm:block">Salama AS</span>
                         </Link>
 
                         {/* Desktop Navigation */}
@@ -136,7 +136,7 @@ export const Layout = ({ children }) => {
                     <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-2">
                             <ChartLine size={24} weight="bold" className="text-primary" />
-                            <span className="font-semibold">Salama Intelligence</span>
+                            <span className="font-semibold">Salama AS</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
                             E-commerce Analytics Platform - Powered by Olist Dataset

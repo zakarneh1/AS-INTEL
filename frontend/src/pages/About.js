@@ -35,7 +35,7 @@ export default function About() {
                     <div className="max-w-3xl">
                         <p className="section-label mb-4">About This Project</p>
                         <h1 className="text-4xl sm:text-5xl font-black tracking-tighter mb-6">
-                            Salama Intelligence
+                            Salama AS
                             <span className="text-primary block">Portfolio Project</span>
                         </h1>
                         <p className="text-lg text-muted-foreground leading-relaxed">

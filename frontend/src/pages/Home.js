@@ -45,7 +45,7 @@ export default function Home() {
                             E-commerce Analytics Platform
                         </p>
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-foreground mb-6 animate-fade-in stagger-1">
-                            Salama Intelligence
+                            Salama AS
                             <span className="text-primary block">Business Analytics</span>
                         </h1>
                         <p className="text-lg sm:text-xl text-muted-foreground mb-8 leading-relaxed animate-fade-in stagger-2">
