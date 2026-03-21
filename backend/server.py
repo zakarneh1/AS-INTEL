@@ -309,7 +309,7 @@ def get_ai_response(message: str) -> str:
 
 @api_router.get("/")
 async def root():
-    return {"message": "Salama Intelligence API - Olist E-commerce Analytics"}
+    return {"message": "Salama AS API - Olist E-commerce Analytics"}
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
