@@ -222,8 +222,7 @@ useEffect(() => {
         setError('');
 
         try {
-            // Make sure API is only the base URL
-            const API = process.env.REACT_APP_BACKEND_URL || 'https://as-intel.onrender.com/api';
+            const API = process.env.REACT_APP_BACKEND_URL;
 
             const [
                 kpisRes,
@@ -251,8 +250,7 @@ useEffect(() => {
             setPaymentsData(paymentsRes.data);
         } catch (err) {
             console.error('Error fetching dashboard data:', err);
-            setError('Unable to load dashboard data from the backend; using fallback values.');
-            // fallback data is already in initial state
+            setError('Unable to load dashboard data. Check API URL and CORS.');
         } finally {
             setLoading(false);
         }
