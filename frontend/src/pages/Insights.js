@@ -133,7 +133,7 @@ export default function Insights() {
     useEffect(() => {
         const fetchInsights = async () => {
             try {
-                const response = await axios.get(`${API}/insights`);
+                const response = await axios.get(`${API}https://as-intel.onrender.com/insights`);
                 setInsights(response.data);
             } catch (error) {
                 console.error('Error fetching insights:', error);

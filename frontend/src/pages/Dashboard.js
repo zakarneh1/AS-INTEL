@@ -221,12 +221,12 @@ export default function Dashboard() {
             setLoading(true);
             try {
                 const [kpisRes, revenueRes, productsRes, statesRes, segmentsRes, paymentsRes] = await Promise.all([
-                    axios.get(`${API}/dashboard/kpis`),
-                    axios.get(`${API}/dashboard/revenue`),
-                    axios.get(`${API}/dashboard/products`),
-                    axios.get(`${API}/dashboard/states`),
-                    axios.get(`${API}/dashboard/segments`),
-                    axios.get(`${API}/dashboard/payments`)
+                    axios.get(`${API}https://as-intel.onrender.com/dashboard/kpis`),
+                    axios.get(`${API}https://as-intel.onrender.com/dashboard/revenue`),
+                    axios.get(`${API}https://as-intel.onrender.com/dashboard/products`),
+                    axios.get(`${API}https://as-intel.onrender.com/dashboard/states`),
+                    axios.get(`${API}https://as-intel.onrender.com/dashboard/segments`),
+                    axios.get(`${API}https://as-intel.onrender.com/dashboard/payments`)
                 ]);
                 
                 setKpis(kpisRes.data);
