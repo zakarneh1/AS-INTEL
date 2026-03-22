@@ -229,7 +229,8 @@ export default function Dashboard() {
     // Filters
     const [year, setYear] = useState('all');
     const [state, setState] = useState('all');
-
+const API = process.env.REACT_APP_BACKEND_URL || "https://as-intel.onrender.com";
+console.log("API VALUE:", API);
 useEffect(() => {
     const fetchData = async () => {
         try {
