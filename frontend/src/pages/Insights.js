@@ -38,7 +38,8 @@ const normalizeBackendUrl = (url) => {
   return `${trimmed}/api`;
 };
 
-const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL);
+const API_FALLBACK = 'https://as-intel.onrender.com';
+const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL || API_FALLBACK);
 
 const categoryIcons = {
     'Geographic Analysis': MapPin,
@@ -140,11 +141,13 @@ export default function Insights() {
     useEffect(() => {
         const fetchInsights = async () => {
             try {
+                console.debug('[Insights] API base: ', API);
                 const response = await axios.get(`${API}/insights`);
                 setInsights(response.data);
             } catch (error) {
                 console.error('Error fetching insights:', error);
-                setError('Unable to load insights data. Check backend URL and CORS.');
+                const details = error.response?.data || error.message || String(error);
+                setError(`Unable to load insights data (${details}). Check backend URL and CORS.`);
             } finally {
                 setLoading(false);
             }

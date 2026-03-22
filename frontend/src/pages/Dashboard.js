@@ -53,7 +53,8 @@ const normalizeBackendUrl = (url) => {
   return `${trimmed}/api`;
 };
 
-const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL);
+const API_FALLBACK = 'https://as-intel.onrender.com';
+const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL || API_FALLBACK);
 
 const CHART_COLORS = {
     light: {
@@ -227,10 +228,7 @@ useEffect(() => {
  const fetchData = async () => {
     setLoading(true);
     try {
-        const [kpisRes, revenueRes, productsRes, statesRes, segmentsRes, paymentsRes] = await Promise.all([
-            axios.get(`${API}/dashboard/kpis`),
-            axios.get(`${API}/dashboard/revenue`),
-            axios.get(`${API}/dashboard/products`),
+        console.debug('[Dashboard] API base: ', API);
             axios.get(`${API}/dashboard/states`),
             axios.get(`${API}/dashboard/segments`),
             axios.get(`${API}/dashboard/payments`)
@@ -247,7 +245,8 @@ useEffect(() => {
         setError('');
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        setError('Unable to load dashboard data from the backend; using local fallback values.');
+        const details = error.response?.data || error.message || String(error);
+        setError(`Unable to load dashboard data from backend (${details}); using fallback. Please check console/network.`);
     } finally {
         setLoading(false);
     }
