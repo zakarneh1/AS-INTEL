@@ -217,44 +217,34 @@ export default function Dashboard() {
     const [state, setState] = useState('all');
 
 useEffect(() => {
-    const fetchData = async () => {
-        setLoading(true);
+ const fetchData = async () => {
+    setLoading(true);
+    try {
+        const [kpisRes, revenueRes, productsRes, statesRes, segmentsRes, paymentsRes] = await Promise.all([
+            axios.get(`${API}/dashboard/kpis`),
+            axios.get(`${API}/dashboard/revenue`),
+            axios.get(`${API}/dashboard/products`),
+            axios.get(`${API}/dashboard/states`),
+            axios.get(`${API}/dashboard/segments`),
+            axios.get(`${API}/dashboard/payments`)
+        ]);
+
+        setKpis(kpisRes.data);
+        setRevenueData(revenueRes.data);
+        setFilteredRevenueData(revenueRes.data);
+        setProductsData(productsRes.data);
+        setStatesData(statesRes.data);
+        setFilteredStatesData(statesRes.data);
+        setSegmentsData(segmentsRes.data);
+        setPaymentsData(paymentsRes.data);
         setError('');
-
-        try {
-            const API = process.env.REACT_APP_BACKEND_URL;
-
-            const [
-                kpisRes,
-                revenueRes,
-                productsRes,
-                statesRes,
-                segmentsRes,
-                paymentsRes
-            ] = await Promise.all([
-                axios.get(`${API}/dashboard/kpis`),
-                axios.get(`${API}/dashboard/revenue`),
-                axios.get(`${API}/dashboard/products`),
-                axios.get(`${API}/dashboard/states`),
-                axios.get(`${API}/dashboard/segments`),
-                axios.get(`${API}/dashboard/payments`)
-            ]);
-
-            setKpis(kpisRes.data);
-            setRevenueData(revenueRes.data);
-            setFilteredRevenueData(revenueRes.data);
-            setProductsData(productsRes.data);
-            setStatesData(statesRes.data);
-            setFilteredStatesData(statesRes.data);
-            setSegmentsData(segmentsRes.data);
-            setPaymentsData(paymentsRes.data);
-        } catch (err) {
-            console.error('Error fetching dashboard data:', err);
-            setError('Unable to load dashboard data. Check API URL and CORS.');
-        } finally {
-            setLoading(false);
-        }
-    };
+    } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        setError('Unable to load dashboard data from the backend; using local fallback values.');
+    } finally {
+        setLoading(false);
+    }
+};
 
     fetchData();
 }, []);
