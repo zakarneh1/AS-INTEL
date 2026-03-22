@@ -232,6 +232,7 @@ export default function Dashboard() {
     const [state, setState] = useState('all');
     axios.defaults.baseURL = "https://as-intel.onrender.com/api";
  useEffect(() => {
+     console.log("API URL:", API);
         const fetchData = async () => {
             setLoading(true);
             try {
