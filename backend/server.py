@@ -607,9 +607,14 @@ async def export_dashboard_csv():
 # Include the router in the main app
 app.include_router(api_router)
 
+cors_origins = os.environ.get('CORS_ORIGINS', '*')
+allowed_origins = [o.strip() for o in cors_origins.split(',') if o.strip()]
+if '*' in allowed_origins:
+    allowed_origins = ['*']
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
