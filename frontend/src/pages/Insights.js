@@ -30,16 +30,21 @@ import {
 } from '../components/ui/dropdown-menu';
 
 const normalizeBackendUrl = (url) => {
-  const fallback = 'http://localhost:8000';
-  if (!url || typeof url !== 'string') return `${fallback}/api`;
+  const fallback = 'https://as-intel.onrender.com';
+  if (url === undefined || url === null || url === '' || url === 'undefined' || typeof url !== 'string') {
+    return `${fallback}/api`;
+  }
+
   const trimmed = url.trim().replace(/\/+$/, '');
-  if (!trimmed) return `${fallback}/api`;
-  if (trimmed.toLowerCase().endsWith('/api')) return trimmed;
-  return `${trimmed}/api`;
+  if (!trimmed || trimmed.toLowerCase() === 'undefined') {
+    return `${fallback}/api`;
+  }
+
+  const base = trimmed.toLowerCase().endsWith('/api') ? trimmed : `${trimmed}/api`;
+  return base;
 };
 
-const API_FALLBACK = 'https://as-intel.onrender.com';
-const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL || API_FALLBACK);
+const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL);
 
 const categoryIcons = {
     'Geographic Analysis': MapPin,
