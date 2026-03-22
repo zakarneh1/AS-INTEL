@@ -59,7 +59,7 @@ const normalizeBackendUrl = (url) => {
   return base;
 };
 
-const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL);
+const API = "https://as-intel.onrender.com";
 
 const CHART_COLORS = {
     light: {
