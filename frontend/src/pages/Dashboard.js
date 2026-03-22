@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import {
     BarChart,
     Bar,
@@ -229,6 +230,7 @@ export default function Dashboard() {
     // Filters
     const [year, setYear] = useState('all');
     const [state, setState] = useState('all');
+    axios.defaults.baseURL = "https://as-intel.onrender.com/api";
  useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -242,7 +244,7 @@ export default function Dashboard() {
                     axios.get(`${API}/dashboard/payments`)
                 ]);
                 
-                setKpis(kpisRes.data);
+                setKpis(kpisRes.data.data || kpisRes.data);
                 setRevenueData(revenueRes.data);
                 setFilteredRevenueData(revenueRes.data);
                 setProductsData(productsRes.data);
