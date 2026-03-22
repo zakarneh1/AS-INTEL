@@ -26,8 +26,7 @@ const normalizeBackendUrl = (url) => {
   const base = trimmed.toLowerCase().endsWith('/api') ? trimmed : `${trimmed}/api`;
   return base;
 };
-
-const API = "https://as-intel.onrender.com";
+const API = "https://as-intel.onrender.com/api";
 
 const suggestedPrompts = [
     "What are the top selling products?",

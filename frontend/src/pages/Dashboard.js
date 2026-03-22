@@ -59,7 +59,7 @@ const normalizeBackendUrl = (url) => {
   return base;
 };
 
-const API = "https://as-intel.onrender.com";
+const API = "https://as-intel.onrender.com/api";
 
 const CHART_COLORS = {
     light: {

@@ -43,9 +43,7 @@ const normalizeBackendUrl = (url) => {
   const base = trimmed.toLowerCase().endsWith('/api') ? trimmed : `${trimmed}/api`;
   return base;
 };
-
-const API = "https://as-intel.onrender.com";
-
+const API = "https://as-intel.onrender.com/api";
 const categoryIcons = {
     'Geographic Analysis': MapPin,
     'Payment Analysis': CreditCard,
