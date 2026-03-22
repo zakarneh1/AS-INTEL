@@ -12,7 +12,16 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const normalizeBackendUrl = (url) => {
+  const fallback = 'http://localhost:8000';
+  if (!url || typeof url !== 'string') return `${fallback}/api`;
+  const trimmed = url.trim().replace(/\/+$/, '');
+  if (!trimmed) return `${fallback}/api`;
+  if (trimmed.toLowerCase().endsWith('/api')) return trimmed;
+  return `${trimmed}/api`;
+};
+
+const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL);
 
 const suggestedPrompts = [
     "What are the top selling products?",

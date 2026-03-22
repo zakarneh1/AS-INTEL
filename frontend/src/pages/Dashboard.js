@@ -44,9 +44,16 @@ import { Skeleton } from '../components/ui/skeleton';
 import { Button } from '../components/ui/button';
 import { useTheme } from '../context/ThemeContext';
 
-const API = process.env.REACT_APP_BACKEND_URL
-  ? `${process.env.REACT_APP_BACKEND_URL}/api`
-  : 'http://localhost:8000/api';
+const normalizeBackendUrl = (url) => {
+  const fallback = 'http://localhost:8000';
+  if (!url || typeof url !== 'string') return `${fallback}/api`;
+  const trimmed = url.trim().replace(/\/+$/, '');
+  if (!trimmed) return `${fallback}/api`;
+  if (trimmed.toLowerCase().endsWith('/api')) return trimmed;
+  return `${trimmed}/api`;
+};
+
+const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL);
 
 const CHART_COLORS = {
     light: {

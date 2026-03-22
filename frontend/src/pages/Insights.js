@@ -29,9 +29,16 @@ import {
     DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 
-const API = process.env.REACT_APP_BACKEND_URL
-  ? `${process.env.REACT_APP_BACKEND_URL}/api`
-  : 'http://localhost:8000/api';
+const normalizeBackendUrl = (url) => {
+  const fallback = 'http://localhost:8000';
+  if (!url || typeof url !== 'string') return `${fallback}/api`;
+  const trimmed = url.trim().replace(/\/+$/, '');
+  if (!trimmed) return `${fallback}/api`;
+  if (trimmed.toLowerCase().endsWith('/api')) return trimmed;
+  return `${trimmed}/api`;
+};
+
+const API = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL);
 
 const categoryIcons = {
     'Geographic Analysis': MapPin,
@@ -133,7 +140,7 @@ export default function Insights() {
     useEffect(() => {
         const fetchInsights = async () => {
             try {
-                const response = await axios.get(`${API}https://as-intel.onrender.com/insights`);
+                const response = await axios.get(`${API}/insights`);
                 setInsights(response.data);
             } catch (error) {
                 console.error('Error fetching insights:', error);
