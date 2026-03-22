@@ -230,38 +230,22 @@ export default function Dashboard() {
     // Filters
     const [year, setYear] = useState('all');
     const [state, setState] = useState('all');
-    axios.defaults.baseURL = "https://as-intel.onrender.com/api";
  useEffect(() => {
-     console.log("API URL:", API);
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const [kpisRes, revenueRes, productsRes, statesRes, segmentsRes, paymentsRes] = await Promise.all([
-                    axios.get(`${API}/dashboard/kpis`),
-                    axios.get(`${API}/dashboard/revenue`),
-                    axios.get(`${API}/dashboard/products`),
-                    axios.get(`${API}/dashboard/states`),
-                    axios.get(`${API}/dashboard/segments`),
-                    axios.get(`${API}/dashboard/payments`)
-                ]);
-                
-                setKpis(kpisRes.data.data || kpisRes.data);
-                setRevenueData(revenueRes.data);
-                setFilteredRevenueData(revenueRes.data);
-                setProductsData(productsRes.data);
-                setStatesData(statesRes.data);
-                setFilteredStatesData(statesRes.data);
-                setSegmentsData(segmentsRes.data);
-                setPaymentsData(paymentsRes.data);
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchData = async () => {
+        console.log("🚀 TEST STARTED");
 
-        fetchData();
-    }, []);
+        try {
+            const res = await axios.get("https://as-intel.onrender.com/api/dashboard/kpis");
+
+            console.log("✅ KPI DATA:", res.data);
+
+        } catch (err) {
+            console.error("❌ ERROR:", err);
+        }
+    };
+
+    fetchData();
+}, []);
 
 
     // Filter revenue data when year changes
