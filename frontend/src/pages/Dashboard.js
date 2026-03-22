@@ -219,38 +219,65 @@ export default function Dashboard() {
     const [paymentsData, setPaymentsData] = useState(FALLBACK_PAYMENTS_DATA);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [kpisRaw, setKpisRaw] = useState(null);
     
     // Filters
     const [year, setYear] = useState('all');
     const [state, setState] = useState('all');
 
 useEffect(() => {
- const fetchData = async () => {
-    setLoading(true);
-    try {
-        console.debug('[Dashboard] API base: ', API);
-            axios.get(`${API}/dashboard/states`),
-            axios.get(`${API}/dashboard/segments`),
-            axios.get(`${API}/dashboard/payments`)
-        ]);
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            console.debug('[Dashboard] API base:', API);
 
-        setKpis(kpisRes.data);
-        setRevenueData(revenueRes.data);
-        setFilteredRevenueData(revenueRes.data);
-        setProductsData(productsRes.data);
-        setStatesData(statesRes.data);
-        setFilteredStatesData(statesRes.data);
-        setSegmentsData(segmentsRes.data);
-        setPaymentsData(paymentsRes.data);
-        setError('');
-    } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        const details = error.response?.data || error.message || String(error);
-        setError(`Unable to load dashboard data from backend (${details}); using fallback. Please check console/network.`);
-    } finally {
-        setLoading(false);
-    }
-};
+            const kpisUrl = `${API}/dashboard/kpis`;
+            const revenueUrl = `${API}/dashboard/revenue`;
+            const productsUrl = `${API}/dashboard/products`;
+            const statesUrl = `${API}/dashboard/states`;
+            const segmentsUrl = `${API}/dashboard/segments`;
+            const paymentsUrl = `${API}/dashboard/payments`;
+
+            console.info('[Dashboard] Requesting', {
+                kpisUrl,
+                revenueUrl,
+                productsUrl,
+                statesUrl,
+                segmentsUrl,
+                paymentsUrl,
+            });
+
+            const [kpisRes, revenueRes, productsRes, statesRes, segmentsRes, paymentsRes] = await Promise.all([
+                axios.get(kpisUrl),
+                axios.get(revenueUrl),
+                axios.get(productsUrl),
+                axios.get(statesUrl),
+                axios.get(segmentsUrl),
+                axios.get(paymentsUrl)
+            ]);
+
+            console.info('[Dashboard] kpis response', kpisRes.data);
+            console.info('[Dashboard] revenue response', revenueRes.data);
+
+            setKpis(kpisRes.data);
+            setKpisRaw(kpisRes.data);
+            setRevenueData(revenueRes.data);
+            setFilteredRevenueData(revenueRes.data);
+            setProductsData(productsRes.data);
+            setStatesData(statesRes.data);
+            setFilteredStatesData(statesRes.data);
+            setSegmentsData(segmentsRes.data);
+            setPaymentsData(paymentsRes.data);
+            setError('');
+        } catch (error) {
+            console.error('[Dashboard] Error fetching dashboard data:', error);
+            const details = error.response?.data || error.message || String(error);
+            setError(`Unable to load dashboard data from backend (${details}).`);
+            setKpisRaw(null);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     fetchData();
 }, []);
@@ -342,6 +369,14 @@ useEffect(() => {
                 <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
                     <p className="font-semibold">{error}</p>
                     <p className="text-sm">Check backend URL and CORS in environment settings. Dashboard uses in-app fallback data until API is reachable.</p>
+                </div>
+            )}
+            {kpisRaw && (
+                <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-blue-700">
+                    <p className="font-semibold">Raw KPI response (debug)</p>
+                    <pre className="mt-2 overflow-auto text-xs" style={{ maxHeight: '160px' }}>
+                        {JSON.stringify(kpisRaw, null, 2)}
+                    </pre>
                 </div>
             )}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
