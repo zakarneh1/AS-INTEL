@@ -232,55 +232,23 @@ export default function Dashboard() {
 
 useEffect(() => {
     const fetchData = async () => {
-        setLoading(true);
         try {
-            console.debug('[Dashboard] API base:', API);
+            const API = "https://as-intel.onrender.com";
 
-            const kpisUrl = `${API}/dashboard/kpis`;
-            const revenueUrl = `${API}/dashboard/revenue`;
-            const productsUrl = `${API}/dashboard/products`;
-            const statesUrl = `${API}/dashboard/states`;
-            const segmentsUrl = `${API}/dashboard/segments`;
-            const paymentsUrl = `${API}/dashboard/payments`;
+            const url = `${API}/api/dashboard/kpis`;
 
-            console.info('[Dashboard] Requesting', {
-                kpisUrl,
-                revenueUrl,
-                productsUrl,
-                statesUrl,
-                segmentsUrl,
-                paymentsUrl,
-            });
+            console.log("CALLING:", url);
 
-            const [kpisRes, revenueRes, productsRes, statesRes, segmentsRes, paymentsRes] = await Promise.all([
-                axios.get(kpisUrl),
-                axios.get(revenueUrl),
-                axios.get(productsUrl),
-                axios.get(statesUrl),
-                axios.get(segmentsUrl),
-                axios.get(paymentsUrl)
-            ]);
+            const res = await axios.get(url);
 
-            console.info('[Dashboard] kpis response', kpisRes.data);
-            console.info('[Dashboard] revenue response', revenueRes.data);
+            console.log("RESPONSE:", res);
+            console.log("DATA:", res.data);
 
-            setKpis(kpisRes.data);
-            setKpisRaw(kpisRes.data);
-            setRevenueData(revenueRes.data);
-            setFilteredRevenueData(revenueRes.data);
-            setProductsData(productsRes.data);
-            setStatesData(statesRes.data);
-            setFilteredStatesData(statesRes.data);
-            setSegmentsData(segmentsRes.data);
-            setPaymentsData(paymentsRes.data);
-            setError('');
-        } catch (error) {
-            console.error('[Dashboard] Error fetching dashboard data:', error);
-            const details = error.response?.data || error.message || String(error);
-            setError(`Unable to load dashboard data from backend (${details}).`);
-            setKpisRaw(null);
-        } finally {
-            setLoading(false);
+            setKpis(res.data);
+
+        } catch (err) {
+            console.error("FULL ERROR:", err);
+            console.error("ERROR RESPONSE:", err.response);
         }
     };
 
