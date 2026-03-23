@@ -1,0 +1,45 @@
+# Git files
+.git
+.gitignore
+.gitignore.txt
+gitignore.txt
+
+# Development files
+.env.local
+.env.*.local
+node_modules
+
+# Testing
+/test_reports
+/tests
+test_result.md
+
+# Documentation
+/memory
+README.md
+design_guidelines.json
+.vscode
+
+# Backend (not needed for frontend deployment)
+/backend
+
+# Local development
+.venv
+*.pyc
+__pycache__
+
+# Build cache
+.cache
+.next
+.parcel-cache
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Misc
+.DS_Store
+Thumbs.db
