@@ -211,6 +211,9 @@ export default function Dashboard() {
 
     const normalizeStateCode = (value) => String(value || '').trim().toUpperCase();
     const normalizeStateValue = (value) => {
+        if (String(value || '').trim().toLowerCase() === 'all') {
+            return 'all';
+        }
         const normalized = normalizeStateCode(value);
         return normalized || 'all';
     };
