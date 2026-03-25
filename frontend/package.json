@@ -62,9 +62,9 @@
     "zod": "^3.24.4"
   },
   "scripts": {
-    "start": "node ./node_modules/@craco/craco/dist/index.js start",
-    "build": "node ./node_modules/@craco/craco/dist/index.js build",
-    "test": "node ./node_modules/@craco/craco/dist/index.js test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "postinstall": "chmod +x node_modules/.bin/* 2>/dev/null || true"
   },
   "browserslist": {
