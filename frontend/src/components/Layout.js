@@ -42,6 +42,9 @@ export const Layout = ({ children }) => {
         className="h-8 w-auto"
     />
     <span className="font-bold text-lg hidden sm:block">AS Intelligence</span>
+    <span className="hidden md:inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-primary">
+        LIVE BUILD 2026-03-25
+    </span>
 </Link>
 
                         {/* Desktop Navigation */}
