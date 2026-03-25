@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import { Layout } from "./components/Layout";
 import { Toaster } from "./components/ui/sonner";
@@ -14,7 +14,7 @@ import About from "./pages/About";
 function App() {
   return (
     <ThemeProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -25,7 +25,7 @@ function App() {
           </Routes>
         </Layout>
         <Toaster />
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   );
 }
