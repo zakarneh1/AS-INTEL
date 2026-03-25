@@ -210,6 +210,10 @@ export default function Dashboard() {
     const [error, setError] = useState('');
 
     const normalizeStateCode = (value) => String(value || '').trim().toUpperCase();
+    const normalizeStateValue = (value) => {
+        const normalized = normalizeStateCode(value);
+        return normalized || 'all';
+    };
     
     // Filters
     const [year, setYear] = useState('all');
@@ -302,7 +306,7 @@ export default function Dashboard() {
             statesData.map((item) => [normalizeStateCode(item.state), item.state_name || normalizeStateCode(item.state)])
         ).entries()
     )
-        .filter(([code]) => code)
+        .filter(([code]) => code && code !== 'ALL')
         .sort((a, b) => a[1].localeCompare(b[1]));
 
     const downloadCsv = (rows, headers, filename) => {
@@ -410,7 +414,7 @@ export default function Dashboard() {
                             <SelectItem value="2018">2018</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Select value={state} onValueChange={setState}>
+                    <Select value={state} onValueChange={(value) => setState(normalizeStateValue(value))}>
                         <SelectTrigger className="w-[180px]" data-testid="filter-state">
                             <SelectValue placeholder="State" />
                         </SelectTrigger>

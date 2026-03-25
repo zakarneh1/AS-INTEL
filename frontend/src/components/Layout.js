@@ -39,9 +39,9 @@ export const Layout = ({ children }) => {
     <img 
         src="/logo.png" 
         alt="AS Intelligence Logo" 
-        className="h-10 w-auto"
+        className="h-12 w-auto"
     />
-    <span className="font-bold text-lg hidden sm:block">AS Intelligence</span>
+    <span className="font-extrabold text-xl tracking-tight hidden sm:block">AS Intelligence</span>
 </Link>
 
                         {/* Desktop Navigation */}
@@ -142,9 +142,9 @@ export const Layout = ({ children }) => {
                             <img 
     src="/logo.png" 
     alt="AS Intelligence Logo" 
-    className="h-8 w-auto"
+    className="h-9 w-auto"
 />
-                            <span className="font-semibold">AS Intelligence</span>
+                            <span className="font-bold text-lg">AS Intelligence</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
                             E-commerce Analytics Platform - Powered by Olist Dataset
