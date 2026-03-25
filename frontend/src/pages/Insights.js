@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { FALLBACK_INSIGHTS_DATA } from '../lib/fallbackData';
+import { apiClient } from '../lib/api';
 import { 
     Lightbulb, 
     TrendUp, 
@@ -29,21 +29,6 @@ import {
     DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 
-const normalizeBackendUrl = (url) => {
-  const fallback = 'https://as-intel.onrender.com';
-  if (url === undefined || url === null || url === '' || url === 'undefined' || typeof url !== 'string') {
-    return `${fallback}/api`;
-  }
-
-  const trimmed = url.trim().replace(/\/+$/, '');
-  if (!trimmed || trimmed.toLowerCase() === 'undefined') {
-    return `${fallback}/api`;
-  }
-
-  const base = trimmed.toLowerCase().endsWith('/api') ? trimmed : `${trimmed}/api`;
-  return base;
-};
-const API = "https://as-intel.onrender.com/api";
 const categoryIcons = {
     'Geographic Analysis': MapPin,
     'Payment Analysis': CreditCard,
@@ -144,8 +129,7 @@ export default function Insights() {
     useEffect(() => {
         const fetchInsights = async () => {
             try {
-                console.debug('[Insights] API base: ', API);
-                const response = await axios.get(`${API}/insights`);
+                const response = await apiClient.get('/insights');
                 setInsights(response.data);
             } catch (error) {
                 console.error('Error fetching insights:', error);
@@ -246,7 +230,7 @@ export default function Insights() {
 
     const handleExportCSV = () => {
         if (!error) {
-            window.open(`${API}/export/insights/csv`, '_blank');
+            window.open(`${apiClient.defaults.baseURL}/export/insights/csv`, '_blank');
             return;
         }
 

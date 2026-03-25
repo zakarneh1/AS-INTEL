@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
 import { 
     PaperPlaneTilt, 
     X, 
@@ -11,22 +10,7 @@ import {
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
-
-const normalizeBackendUrl = (url) => {
-  const fallback = 'https://as-intel.onrender.com';
-  if (url === undefined || url === null || url === '' || url === 'undefined' || typeof url !== 'string') {
-    return `${fallback}/api`;
-  }
-
-  const trimmed = url.trim().replace(/\/+$/, '');
-  if (!trimmed || trimmed.toLowerCase() === 'undefined') {
-    return `${fallback}/api`;
-  }
-
-  const base = trimmed.toLowerCase().endsWith('/api') ? trimmed : `${trimmed}/api`;
-  return base;
-};
-const API = "https://as-intel.onrender.com/api";
+import { apiClient } from '../lib/api';
 
 const suggestedPrompts = [
     "What are the top selling products?",
@@ -113,7 +97,7 @@ export const ChatWidget = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${API}/chat`, { message: userMessage.content });
+            const response = await apiClient.post('/chat', { message: userMessage.content });
             setMessages(prev => [...prev, { 
                 role: 'assistant', 
                 content: response.data.response 

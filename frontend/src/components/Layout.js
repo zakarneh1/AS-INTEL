@@ -41,7 +41,6 @@ export const Layout = ({ children }) => {
         alt="AS Intelligence Logo" 
         className="h-8 w-auto"
     />
-    <h1 style={{ color: 'red' }}>IT WORKS NOW</h1>
     <span className="font-bold text-lg hidden sm:block">AS Intelligence</span>
 </Link>
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { apiClient } from '../lib/api';
 
 import {
     BarChart,
@@ -44,23 +44,6 @@ import {
 import { Skeleton } from '../components/ui/skeleton';
 import { Button } from '../components/ui/button';
 import { useTheme } from '../context/ThemeContext';
-
-const normalizeBackendUrl = (url) => {
-  const fallback = 'https://as-intel.onrender.com';
-  if (url === undefined || url === null || url === '' || url === 'undefined' || typeof url !== 'string') {
-    return `${fallback}/api`;
-  }
-
-  const trimmed = url.trim().replace(/\/+$/, '');
-  if (!trimmed || trimmed.toLowerCase() === 'undefined') {
-    return `${fallback}/api`;
-  }
-
-  const base = trimmed.toLowerCase().endsWith('/api') ? trimmed : `${trimmed}/api`;
-  return base;
-};
-
-const API = "https://as-intel.onrender.com/api";
 
 const CHART_COLORS = {
     light: {
@@ -225,27 +208,59 @@ export default function Dashboard() {
     const [paymentsData, setPaymentsData] = useState(FALLBACK_PAYMENTS_DATA);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [kpisRaw, setKpisRaw] = useState(null);
     
     // Filters
     const [year, setYear] = useState('all');
     const [state, setState] = useState('all');
- useEffect(() => {
-    const fetchData = async () => {
-        console.log("🚀 TEST STARTED");
+    useEffect(() => {
+        let mounted = true;
 
-        try {
-            const res = await axios.get("https://as-intel.onrender.com/api/dashboard/kpis");
+        const fetchData = async () => {
+            setLoading(true);
+            setError('');
 
-            console.log("✅ KPI DATA:", res.data);
+            try {
+                const [kpisRes, revenueRes, productsRes, statesRes, segmentsRes, paymentsRes] = await Promise.all([
+                    apiClient.get('/dashboard/kpis'),
+                    apiClient.get('/dashboard/revenue'),
+                    apiClient.get('/dashboard/products'),
+                    apiClient.get('/dashboard/states'),
+                    apiClient.get('/dashboard/segments'),
+                    apiClient.get('/dashboard/payments'),
+                ]);
 
-        } catch (err) {
-            console.error("❌ ERROR:", err);
-        }
-    };
+                if (!mounted) return;
 
-    fetchData();
-}, []);
+                setKpis(kpisRes.data || FALLBACK_KPIS);
+                setRevenueData(Array.isArray(revenueRes.data) ? revenueRes.data : FALLBACK_REVENUE_DATA);
+                setProductsData(Array.isArray(productsRes.data) ? productsRes.data : FALLBACK_PRODUCTS_DATA);
+                setStatesData(Array.isArray(statesRes.data) ? statesRes.data : FALLBACK_STATES_DATA);
+                setSegmentsData(Array.isArray(segmentsRes.data) ? segmentsRes.data : FALLBACK_SEGMENTS_DATA);
+                setPaymentsData(Array.isArray(paymentsRes.data) ? paymentsRes.data : FALLBACK_PAYMENTS_DATA);
+            } catch (err) {
+                if (!mounted) return;
+
+                console.error('Error fetching dashboard data:', err);
+                setError('Unable to load dashboard data from API. Showing fallback dataset.');
+                setKpis(FALLBACK_KPIS);
+                setRevenueData(FALLBACK_REVENUE_DATA);
+                setProductsData(FALLBACK_PRODUCTS_DATA);
+                setStatesData(FALLBACK_STATES_DATA);
+                setSegmentsData(FALLBACK_SEGMENTS_DATA);
+                setPaymentsData(FALLBACK_PAYMENTS_DATA);
+            } finally {
+                if (mounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchData();
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
 
 
     // Filter revenue data when year changes
@@ -282,7 +297,7 @@ export default function Dashboard() {
 
     const handleExportCSV = () => {
         if (!error) {
-            window.open(`${API}/export/dashboard/csv`, '_blank');
+            window.open(`${apiClient.defaults.baseURL}/export/dashboard/csv`, '_blank');
             return;
         }
 
@@ -335,14 +350,6 @@ export default function Dashboard() {
                 <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-red-700">
                     <p className="font-semibold">{error}</p>
                     <p className="text-sm">Check backend URL and CORS in environment settings. Dashboard uses in-app fallback data until API is reachable.</p>
-                </div>
-            )}
-            {kpisRaw && (
-                <div className="mb-4 rounded-md border border-blue-200 bg-blue-50 px-4 py-3 text-blue-700">
-                    <p className="font-semibold">Raw KPI response (debug)</p>
-                    <pre className="mt-2 overflow-auto text-xs" style={{ maxHeight: '160px' }}>
-                        {JSON.stringify(kpisRaw, null, 2)}
-                    </pre>
                 </div>
             )}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
