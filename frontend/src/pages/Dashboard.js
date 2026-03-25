@@ -208,6 +208,8 @@ export default function Dashboard() {
     const [paymentsData, setPaymentsData] = useState(FALLBACK_PAYMENTS_DATA);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const normalizeStateCode = (value) => String(value || '').trim().toUpperCase();
     
     // Filters
     const [year, setYear] = useState('all');
@@ -234,7 +236,15 @@ export default function Dashboard() {
                 setKpis(kpisRes.data || FALLBACK_KPIS);
                 setRevenueData(Array.isArray(revenueRes.data) ? revenueRes.data : FALLBACK_REVENUE_DATA);
                 setProductsData(Array.isArray(productsRes.data) ? productsRes.data : FALLBACK_PRODUCTS_DATA);
-                setStatesData(Array.isArray(statesRes.data) ? statesRes.data : FALLBACK_STATES_DATA);
+                setStatesData(
+                    Array.isArray(statesRes.data)
+                        ? statesRes.data.map((item) => ({
+                              ...item,
+                              state: normalizeStateCode(item.state),
+                              state_name: item.state_name || normalizeStateCode(item.state),
+                          }))
+                        : FALLBACK_STATES_DATA
+                );
                 setSegmentsData(Array.isArray(segmentsRes.data) ? segmentsRes.data : FALLBACK_SEGMENTS_DATA);
                 setPaymentsData(Array.isArray(paymentsRes.data) ? paymentsRes.data : FALLBACK_PAYMENTS_DATA);
             } catch (err) {
@@ -277,9 +287,23 @@ export default function Dashboard() {
         if (state === 'all') {
             setFilteredStatesData(statesData);
         } else {
-            setFilteredStatesData(statesData.filter(d => d.state === state));
+            const selected = normalizeStateCode(state);
+            setFilteredStatesData(statesData.filter(d => normalizeStateCode(d.state) === selected));
         }
     }, [state, statesData]);
+
+    const revenueChartData = filteredRevenueData.map((d) => ({
+        ...d,
+        period: `${d.month} ${String(d.year).slice(-2)}`,
+    }));
+
+    const stateOptions = Array.from(
+        new Map(
+            statesData.map((item) => [normalizeStateCode(item.state), item.state_name || normalizeStateCode(item.state)])
+        ).entries()
+    )
+        .filter(([code]) => code)
+        .sort((a, b) => a[1].localeCompare(b[1]));
 
     const downloadCsv = (rows, headers, filename) => {
         let csvContent = headers.join(',') + '\n';
@@ -392,14 +416,11 @@ export default function Dashboard() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All States</SelectItem>
-                            <SelectItem value="SP">São Paulo (SP)</SelectItem>
-                            <SelectItem value="RJ">Rio de Janeiro (RJ)</SelectItem>
-                            <SelectItem value="MG">Minas Gerais (MG)</SelectItem>
-                            <SelectItem value="RS">Rio Grande do Sul (RS)</SelectItem>
-                            <SelectItem value="PR">Paraná (PR)</SelectItem>
-                            <SelectItem value="SC">Santa Catarina (SC)</SelectItem>
-                            <SelectItem value="BA">Bahia (BA)</SelectItem>
-                            <SelectItem value="DF">Distrito Federal (DF)</SelectItem>
+                            {stateOptions.map(([code, name]) => (
+                                <SelectItem key={code} value={code}>
+                                    {name} ({code})
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                     {(year !== 'all' || state !== 'all') && (
@@ -419,7 +440,7 @@ export default function Dashboard() {
                     <div className="mb-4 p-3 bg-primary/5 border border-primary/20 rounded-md">
                         <p className="text-sm text-primary font-medium">
                             Showing data for: {year !== 'all' ? year : 'All Years'}
-                            {state !== 'all' && ` • ${statesData.find(s => s.state === state)?.state_name || state}`}
+                            {state !== 'all' && ` • ${statesData.find(s => normalizeStateCode(s.state) === normalizeStateCode(state))?.state_name || state}`}
                         </p>
                     </div>
                 )}
@@ -478,7 +499,7 @@ export default function Dashboard() {
                             <Skeleton className="h-[300px] w-full" />
                         ) : (
                             <ResponsiveContainer width="100%" height={300}>
-                                <AreaChart data={filteredRevenueData}>
+                                <AreaChart data={revenueChartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                                     <defs>
                                         <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor={colors.primary} stopOpacity={0.3}/>
@@ -487,11 +508,12 @@ export default function Dashboard() {
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" stroke={colors.grid} vertical={false} />
                                     <XAxis 
-                                        dataKey="month" 
+                                        dataKey="period"
                                         stroke={colors.text} 
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
+                                        minTickGap={16}
                                     />
                                     <YAxis 
                                         stroke={colors.text} 
@@ -502,12 +524,14 @@ export default function Dashboard() {
                                     />
                                     <Tooltip content={<RevenueTooltip />} />
                                     <Area 
-                                        type="monotone" 
+                                        type="monotoneX"
                                         dataKey="revenue" 
                                         name="Revenue"
                                         stroke={colors.primary} 
                                         strokeWidth={2}
                                         fill="url(#revenueGradient)"
+                                        dot={false}
+                                        activeDot={{ r: 4 }}
                                     />
                                 </AreaChart>
                             </ResponsiveContainer>
