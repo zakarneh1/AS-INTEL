@@ -5,7 +5,7 @@ Build a modern, professional, and fully responsive web application for a portfol
 
 ## User Choices
 - **App Name**: AS Intel
-- **AI Assistant**: Mock responses (free, no API costs) - floating chat widget
+- **Analytics Assistant**: Template responses (free, no API costs) - floating chat widget
 - **Theme**: Both dark and light mode with toggle
 - **Charts**: Recharts (best for React)
 - **Data Source**: Real Kaggle Olist Brazilian E-commerce Dataset
@@ -29,7 +29,7 @@ Build a modern, professional, and fully responsive web application for a portfol
 - [x] Responsive design (desktop-first)
 - [x] Interactive charts and visualizations
 - [x] Business intelligence insights
-- [x] Floating AI chat widget
+- [x] Floating assistant chat widget
 - [x] PDF/CSV export functionality
 - [x] Real Olist dataset integration
 
@@ -44,7 +44,7 @@ Build a modern, professional, and fully responsive web application for a portfol
 
 ### Floating Chat Widget
 - AS Intel Assistant accessible from all pages
-- Mock responses with real Olist data patterns
+- Template responses with real Olist data patterns
 - Suggested prompts and reset functionality
 
 ### Real Olist Data
@@ -69,7 +69,7 @@ Build a modern, professional, and fully responsive web application for a portfol
 - [x] Floating chat widget
 
 ### P1 (High Priority) - Future
-- [ ] Real AI integration (OpenAI/Claude) - user will upgrade later
+- [ ] Advanced conversational model integration - user will upgrade later
 - [ ] Date range picker with calendar
 - [ ] More detailed geographic maps
 
@@ -79,6 +79,6 @@ Build a modern, professional, and fully responsive web application for a portfol
 - [ ] Email report scheduling
 
 ## Next Tasks
-1. User to upgrade AI to real integration when ready
+1. User to upgrade assistant responses to model-backed integration when ready
 2. Add geographic map visualization
 3. Implement date range calendar picker

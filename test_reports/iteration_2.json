@@ -1,5 +1,5 @@
 {
-  "summary": "Completed comprehensive testing of AS Intel e-commerce intelligence platform with real Olist Brazilian dataset. All backend APIs working (100% success rate) and frontend features fully functional including real data display, export functionality, and AI chat integration.",
+  "summary": "Completed comprehensive testing of AS Intel e-commerce intelligence platform with real Olist Brazilian dataset. All backend APIs working (100% success rate) and frontend features fully functional including real data display, export functionality, and assistant chat integration.",
   
   "backend_issues": {
     "critical_bugs": [],
@@ -38,7 +38,7 @@
     "Architecture page shows comprehensive Olist dataset structure with file details",
     "Dark/Light mode toggle working perfectly",
     "All backend API endpoints (root, KPIs, revenue, products, states, segments, payments, insights, chat, status, exports)",
-    "AI chat functionality with proper Olist-specific responses",
+    "Assistant chat functionality with proper Olist-specific responses",
     "Navigation between all pages working correctly"
   ],
   

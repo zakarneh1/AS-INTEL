@@ -1,10 +1,13 @@
 import requests
 import sys
+import os
 from datetime import datetime
 import json
 
 class EcommerceAPITester:
-    def __init__(self, base_url="https://data-insights-pro-27.preview.emergentagent.com"):
+    def __init__(self, base_url=None):
+        if base_url is None:
+            base_url = os.getenv("BACKEND_TEST_BASE_URL", "http://localhost:8001")
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
@@ -115,7 +118,7 @@ class EcommerceAPITester:
         return self.run_test("Business Insights", "GET", "insights", 200, expected_fields=expected_fields)
 
     def test_chat_functionality(self):
-        """Test AI chat endpoint with different prompts"""
+        """Test assistant chat endpoint with different prompts"""
         test_cases = [
             {"message": "What are the top selling products?", "expected_keyword": "bed_bath_table"},
             {"message": "Tell me about revenue", "expected_keyword": "R$13,591,643"},
@@ -193,7 +196,7 @@ def main():
     print("\n📤 Testing Export Endpoints...")
     tester.test_export_endpoints()
     
-    print("\n🤖 Testing AI Chat Functionality...")
+    print("\n💬 Testing Assistant Chat Functionality...")
     tester.test_chat_functionality()
     
     print("\n📋 Testing Status Endpoints...")

@@ -265,7 +265,7 @@ OLIST_INSIGHTS = [
         "id": "8",
         "title": "Email marketing generates highest ROI at 4200%",
         "description": "Email campaigns generate R$42 for every R$1 spent, outperforming paid social (320% ROI) and paid search (280% ROI). Personalized product recommendation emails have 3x higher click rates and 2.1x conversion.",
-        "recommendation": "Increase email marketing budget allocation from 15% to 25%. Implement AI-driven product recommendations in all transactional emails. Create behavior-triggered email sequences for cart abandonment and browse abandonment.",
+        "recommendation": "Increase email marketing budget allocation from 15% to 25%. Implement data-driven product recommendations in all transactional emails. Create behavior-triggered email sequences for cart abandonment and browse abandonment.",
         "category": "Marketing Analysis",
         "impact": "medium",
         "metric_value": "4200% ROI"
@@ -291,9 +291,9 @@ OLIST_INSIGHTS = [
     },
 ]
 
-# ============ AI MOCK RESPONSES ============
+# ============ ASSISTANT RESPONSES ============
 
-AI_RESPONSES = {
+ASSISTANT_RESPONSES = {
     "top selling": "Based on Olist data analysis, the top 5 product categories are:\n\n1. **bed_bath_table** - 11,115 orders (R$1.7M)\n2. **health_beauty** - 9,672 orders (R$1.5M)\n3. **sports_leisure** - 8,641 orders (R$1.2M)\n4. **furniture_decor** - 8,334 orders (R$1.2M)\n5. **computers_accessories** - 7,827 orders (R$1.1M)\n\nThese top 5 categories account for 46% of all orders in the dataset.",
     "revenue": "Revenue analysis from Olist dataset:\n\n• **Total Revenue**: R$13,591,643.70\n• **Peak Month**: November 2017 (R$1.02M)\n• **Average Order Value**: R$136.68\n• **Year-over-Year Growth**: +12.4%\n\nSão Paulo state alone generates 42% of total revenue.",
     "customer": "Customer insights from Olist analysis:\n\n• **Total Customers**: 96,096 unique buyers\n• **Champions (High Value)**: 10% of customers\n• **New Customers**: 25% made only one purchase\n• **Average Review Score**: 4.09/5.0\n\nTop opportunity: Re-engage the 25% single-purchase customers.",
@@ -302,20 +302,20 @@ AI_RESPONSES = {
     "default": "I can help you analyze the Olist e-commerce data. Ask me about:\n\n• Top selling products/categories\n• Revenue trends and analysis\n• Customer segments and behavior\n• Geographic sales distribution\n• Payment methods breakdown\n\nWhat would you like to know?"
 }
 
-def get_ai_response(message: str) -> str:
+def get_assistant_response(message: str) -> str:
     message_lower = message.lower()
     if any(word in message_lower for word in ["top", "selling", "product", "category", "best"]):
-        return AI_RESPONSES["top selling"]
+        return ASSISTANT_RESPONSES["top selling"]
     elif any(word in message_lower for word in ["revenue", "sales", "money", "income", "growth"]):
-        return AI_RESPONSES["revenue"]
+        return ASSISTANT_RESPONSES["revenue"]
     elif any(word in message_lower for word in ["customer", "buyer", "segment", "review", "satisfaction"]):
-        return AI_RESPONSES["customer"]
+        return ASSISTANT_RESPONSES["customer"]
     elif any(word in message_lower for word in ["state", "city", "region", "location", "geographic", "são paulo", "rio"]):
-        return AI_RESPONSES["state"]
+        return ASSISTANT_RESPONSES["state"]
     elif any(word in message_lower for word in ["payment", "credit", "boleto", "card", "pay"]):
-        return AI_RESPONSES["payment"]
+        return ASSISTANT_RESPONSES["payment"]
     else:
-        return AI_RESPONSES["default"]
+        return ASSISTANT_RESPONSES["default"]
 
 # ============ API ROUTES ============
 
@@ -377,7 +377,7 @@ async def get_insights():
 
 @api_router.post("/chat")
 async def chat(request: ChatRequest):
-    response = get_ai_response(request.message)
+    response = get_assistant_response(request.message)
     return ChatResponse(response=response)
 
 # Enhanced CSV Export endpoints

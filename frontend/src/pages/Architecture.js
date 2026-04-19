@@ -219,7 +219,7 @@ export default function Architecture() {
                                 { method: 'GET', path: '/api/dashboard/segments', desc: 'Customer RFM segments' },
                                 { method: 'GET', path: '/api/dashboard/payments', desc: 'Payment method breakdown' },
                                 { method: 'GET', path: '/api/insights', desc: 'Business insights list' },
-                                { method: 'POST', path: '/api/chat', desc: 'AI assistant chat' },
+                                { method: 'POST', path: '/api/chat', desc: 'Analytics assistant chat' },
                                 { method: 'GET', path: '/api/export/*/csv', desc: 'CSV export endpoints' },
                             ].map((endpoint) => (
                                 <div key={endpoint.path} className="flex items-center gap-3 p-2 border border-border rounded-md bg-background">

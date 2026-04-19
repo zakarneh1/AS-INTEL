@@ -19,14 +19,14 @@
     "Dashboard filters (date range, country, category) functional",
     "All 4 dashboard charts rendering correctly (revenue over time, top products, sales by country, customer segmentation)",
     "Insights page with 6 business insights and filter tabs (All, High, Medium, Low impact)",
-    "AI Assistant chat interface with suggested prompts and mock responses",
-    "AI chat reset functionality working",
+    "Assistant chat interface with suggested prompts and template responses",
+    "Assistant chat reset functionality working",
     "Architecture page with system components diagram and tech stack",
     "About page with problem/solution sections and contact buttons",
     "Dark/Light mode toggle working correctly",
     "Navigation between all 6 pages working",
     "Mobile responsiveness with mobile menu and navigation",
-    "Mock AI responses working as expected"
+    "Template assistant responses working as expected"
   ],
   
   "test_report_links": ["/app/backend_test.py"],
