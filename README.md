@@ -77,36 +77,6 @@ AS INTEL/
 - GET /api/export/dashboard/csv
 - GET /api/export/insights/csv
 
-## Local Setup
-
-### 1) Clone
-
-```bash
-git clone <your-repo-url>
-cd "AS INTEL"
-```
-
-### 2) Run Backend
-
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn server:app --reload --host 0.0.0.0 --port 8001
-```
-
-### 3) Run Frontend
-
-```bash
-cd frontend
-npm install
-npm start
-```
-
-Frontend runs at http://localhost:3000
-Backend runs at http://localhost:8001
-
 ## Environment Notes
 
 Frontend uses `REACT_APP_BACKEND_URL` if provided.
@@ -138,7 +108,7 @@ The repository includes API and iteration test artifacts in:
 This is a practical analytics product build intended to demonstrate how I approach:
 
 - analytical reasoning,
-- stakeholder-oriented reporting,
+- stakeholder oriented reporting,
 - and full-stack implementation quality.
 
 If you are reviewing this for hiring, I would be happy to walk through architecture decisions, tradeoffs, and how I would evolve this into a production BI product.
