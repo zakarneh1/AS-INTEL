@@ -1,53 +1,74 @@
-# IDE and editors
+# ------------------------------------------------------------
+# AS Intel - Root .gitignore
+# Keeps repository clean and review-ready for hiring teams.
+# ------------------------------------------------------------
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
 .idea/
 .vscode/
 
-# Dependencies
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.hypothesis/
+.ipynb_checkpoints/
+
+# Node / frontend dependencies
 node_modules/
 frontend/node_modules/
 .pnp
 .pnp.js
-.yarn/
 
-# Testing
+# Frontend build outputs and caches
+build/
+dist/
+frontend/build/
+frontend/.cache/
+.cache/
+*.pack
+
+# Coverage / test artifacts
 coverage/
+.coverage
+.coverage.*
+htmlcov/
 
-# Next.js
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files and local secrets
+.env
+.env.*
+!.env.example
+*.pem
+*token.json*
+*credentials.json*
+
+# Deployment / hosting
+.vercel/
+
+# Optional framework leftovers (safe to keep ignored)
 .next/
 out/
 next-env.d.ts
 *.tsbuildinfo
-
-# Build outputs and caches
-build/
-frontend/build/
-dist/
-.cache/
-frontend/.cache/
-*.pack
-
-# Environment and secrets
-.env
-.env.local
-.env.*.local
-*token.json*
-*credentials.json*
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# Python
-__pycache__/
-*.pyc
-venv/
-.venv/
-
-# Deployment
-.vercel/
-
-# System files
-.DS_Store
-Thumbs.db
