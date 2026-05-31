@@ -68,6 +68,6 @@ export const FALLBACK_PAYMENTS_DATA = [
 ];
 
 export const FALLBACK_INSIGHTS_DATA = [
-  { id: '1', title: 'São Paulo dominates with 42% of all orders', description: 'SP is #1 and generates 42% revenue', recommendation: 'Focus marketing in SP.', category: 'Geographic Analysis', impact: 'high', metric_value: '42% market share' },
-  { id: '2', title: 'Top 20% customers generate 65% revenue', description: 'Heavy tail customers generate most revenue', recommendation: 'Launch VIP program.', category: 'Customer Segmentation', impact: 'high', metric_value: '65% revenue from 20%' },
+  { id: '1', title: 'São Paulo dominates with 42% of all orders', description: 'São Paulo leads with most revenue and orders.', recommendation: 'Protect SP and test growth in RJ and MG.', category: 'Geographic Analysis', impact: 'high', metric_value: '42% market share' },
+  { id: '2', title: 'Top 20% customers generate 65% revenue', description: 'A small high-value group drives most revenue.', recommendation: 'Prioritize loyalty work and re-engagement.', category: 'Customer Segmentation', impact: 'high', metric_value: '65% revenue from 20%' },
 ];

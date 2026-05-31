@@ -1,29 +1,76 @@
-import { 
-    Target, 
-    Lightbulb, 
+import {
+    Target,
+    Lightbulb,
     Wrench,
     CheckCircle,
     GithubLogo,
     LinkedinLogo,
     EnvelopeSimple,
-    Database
+    Database,
+    FileCode,
+    Table,
+    ChartLine,
 } from '@phosphor-icons/react';
 import { Button } from '../components/ui/button';
 
-const skills = [
-    { name: 'SQL', level: 90 },
-    { name: 'Python', level: 85 },
-    { name: 'Data Analysis', level: 88 },
-    { name: 'Power BI / Tableau', level: 80 },
-    { name: 'Excel / Sheets', level: 92 },
-    { name: 'Web Development', level: 75 },
+const tools = [
+    { category: 'Frontend', items: ['React', 'Tailwind CSS', 'Responsive layouts', 'Interactive charts'] },
+    { category: 'Backend', items: ['FastAPI', 'MongoDB', 'API validation', 'CSV exports'] },
+    { category: 'Data analysis', items: ['SQL', 'Python', 'Pandas', 'NumPy', 'Excel'] },
+    { category: 'Visualization and BI', items: ['Recharts', 'Power BI', 'Reporting layouts', 'Executive dashboards'] },
+    { category: 'Delivery and quality', items: ['Git', 'Fallback data', 'Deployment checks', 'PDF exports'] },
 ];
 
-const tools = [
-    { category: 'Data Analysis', items: ['Python', 'Pandas', 'NumPy', 'SQL', 'Excel'] },
-    { category: 'Visualization', items: ['Recharts', 'Matplotlib', 'Seaborn', 'Power BI'] },
-    { category: 'Database', items: ['MongoDB', 'PostgreSQL', 'MySQL'] },
-    { category: 'Development', items: ['React', 'FastAPI', 'Git', 'Docker'] },
+const responsibilities = [
+    {
+        title: 'SQL and source logic',
+        text: 'Defined the joins and summary logic needed to turn the Olist tables into monthly, regional, and customer-level views.',
+    },
+    {
+        title: 'Python preparation',
+        text: 'Handled data shaping, fallback datasets, and report generation in the backend when live service calls are unavailable.',
+    },
+    {
+        title: 'Dashboard development',
+        text: 'Built the interactive React interface, filters, chart components, empty states, and download actions.',
+    },
+    {
+        title: 'Reporting and narrative',
+        text: 'Wrote the executive summary, case study structure, and decision-focused recommendations shown across the site.',
+    },
+];
+
+const evidenceBlocks = [
+    {
+        icon: Table,
+        title: 'Data preparation',
+        items: ['Normalized state codes', 'Tracked fallback rows separately', 'Checked totals against source data'],
+    },
+    {
+        icon: FileCode,
+        title: 'SQL and Python work',
+        items: ['Aggregated order revenue by month', 'Built clean output models for the API', 'Prepared export-ready report rows'],
+    },
+    {
+        icon: ChartLine,
+        title: 'Dashboard work',
+        items: ['Created KPI cards and trend charts', 'Added state drill-down filters', 'Built PDF and CSV export actions'],
+    },
+];
+
+const examples = [
+    {
+        label: 'SQL-style logic',
+        snippet: 'select state, count(*) as orders, sum(revenue) as revenue\nfrom orders\ngroup by state\norder by revenue desc;',
+    },
+    {
+        label: 'Python preparation',
+        snippet: 'df = df.drop_duplicates()\ndf["state"] = df["state"].str.upper()\ndf["revenue"] = pd.to_numeric(df["revenue"])',
+    },
+    {
+        label: 'Reporting output',
+        snippet: 'Executive summary -> KPI cards -> chart interpretation -> recommendation -> export',
+    },
 ];
 
 export default function About() {
@@ -115,35 +162,27 @@ export default function About() {
                     </div>
                 </div>
 
-                {/* Skills & Tools */}
+                {/* Evidence & Tools */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-                    <div className="border border-border rounded-md p-8 bg-card" data-testid="skills-section">
+                    <div className="border border-border rounded-md p-8 bg-card" data-testid="responsibilities-section">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
                                 <Wrench size={24} weight="duotone" className="text-primary" />
                             </div>
-                            <h2 className="text-xl font-bold">Technical Skills</h2>
+                            <h2 className="text-xl font-bold">Project responsibilities</h2>
                         </div>
                         <div className="space-y-4">
-                            {skills.map((skill) => (
-                                <div key={skill.name}>
-                                    <div className="flex justify-between mb-1">
-                                        <span className="text-sm font-medium">{skill.name}</span>
-                                        <span className="text-sm text-muted-foreground font-mono">{skill.level}%</span>
-                                    </div>
-                                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-primary rounded-full transition-all duration-500"
-                                            style={{ width: `${skill.level}%` }}
-                                        />
-                                    </div>
+                            {responsibilities.map((item) => (
+                                <div key={item.title} className="border border-border rounded-md p-4 bg-background">
+                                    <p className="font-semibold mb-1">{item.title}</p>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     <div className="border border-border rounded-md p-8 bg-card" data-testid="tools-section">
-                        <h2 className="text-xl font-bold mb-6">Tools & Technologies</h2>
+                        <h2 className="text-xl font-bold mb-6">Tools and methods used</h2>
                         <div className="space-y-6">
                             {tools.map((group) => (
                                 <div key={group.category}>
@@ -163,6 +202,42 @@ export default function About() {
                                 </div>
                             ))}
                         </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-16" data-testid="evidence-section">
+                    {evidenceBlocks.map((block) => {
+                        const Icon = block.icon;
+                        return (
+                            <div key={block.title} className="border border-border rounded-md p-6 bg-card">
+                                <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center mb-4">
+                                    <Icon size={24} weight="duotone" className="text-primary" />
+                                </div>
+                                <h3 className="font-semibold text-lg mb-3">{block.title}</h3>
+                                <ul className="space-y-2">
+                                    {block.items.map((item) => (
+                                        <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground leading-relaxed">
+                                            <CheckCircle size={16} weight="fill" className="text-primary mt-0.5 flex-shrink-0" />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                <div className="border border-border rounded-md p-8 bg-card mb-16" data-testid="examples-section">
+                    <h2 className="text-xl font-bold mb-6">Examples of the work</h2>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        {examples.map((example) => (
+                            <div key={example.label} className="border border-border rounded-md p-4 bg-background">
+                                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">{example.label}</p>
+                                <pre className="text-xs leading-relaxed text-foreground whitespace-pre-wrap font-mono m-0">
+                                    {example.snippet}
+                                </pre>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
@@ -191,18 +266,24 @@ export default function About() {
                         Let's connect and discuss how data analytics can drive business value.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
-                        <Button variant="outline" className="gap-2" data-testid="github-btn">
-                            <GithubLogo size={18} weight="bold" />
-                            GitHub
-                        </Button>
-                        <Button variant="outline" className="gap-2" data-testid="linkedin-btn">
-                            <LinkedinLogo size={18} weight="bold" />
-                            LinkedIn
-                        </Button>
-                        <Button className="gap-2" data-testid="contact-btn">
-                            <EnvelopeSimple size={18} weight="bold" />
-                            Contact Me
-                        </Button>
+                        <a href="https://github.com/zakarneh1" target="_blank" rel="noreferrer">
+                            <Button variant="outline" className="gap-2" data-testid="github-btn">
+                                <GithubLogo size={18} weight="bold" />
+                                GitHub
+                            </Button>
+                        </a>
+                        <a href="https://www.linkedin.com/in/ahmad--salama" target="_blank" rel="noreferrer">
+                            <Button variant="outline" className="gap-2" data-testid="linkedin-btn">
+                                <LinkedinLogo size={18} weight="bold" />
+                                LinkedIn
+                            </Button>
+                        </a>
+                        <a href="https://ahmadsalama.com/contact" target="_blank" rel="noreferrer">
+                            <Button className="gap-2" data-testid="contact-btn">
+                                <EnvelopeSimple size={18} weight="bold" />
+                                Contact Me
+                            </Button>
+                        </a>
                     </div>
                 </div>
             </div>

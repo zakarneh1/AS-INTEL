@@ -252,6 +252,20 @@ export default function Insights() {
         : insights.filter(i => i.impact === filter);
 
     const categories = [...new Set(insights.map(i => i.category))];
+    const decisionThemes = [
+        {
+            title: 'Retention',
+            text: 'Who should be kept active?',
+        },
+        {
+            title: 'Revenue concentration',
+            text: 'Where is the business too concentrated?',
+        },
+        {
+            title: 'Operational action',
+            text: 'What should change next?',
+        },
+    ];
 
     return (
         <div className="page-container">
@@ -266,10 +280,9 @@ export default function Insights() {
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
                     <div>
                         <p className="section-label mb-2">Business Intelligence</p>
-                        <h1 className="text-3xl font-bold tracking-tight mb-4">Data-Driven Insights</h1>
+                        <h1 className="text-3xl font-bold tracking-tight mb-4">Findings</h1>
                         <p className="text-muted-foreground max-w-2xl">
-                            Key findings from analyzing the Olist e-commerce dataset, with actionable 
-                            recommendations to improve business performance.
+                            Each card gives the issue, the evidence, and the next move.
                         </p>
                     </div>
                     <DropdownMenu>
@@ -290,6 +303,15 @@ export default function Insights() {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    {decisionThemes.map((theme) => (
+                        <div key={theme.title} className="border border-border rounded-md p-5 bg-card">
+                            <p className="text-xs uppercase tracking-wider text-primary font-semibold mb-2">{theme.title}</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{theme.text}</p>
+                        </div>
+                    ))}
                 </div>
 
                 {/* Stats Summary */}

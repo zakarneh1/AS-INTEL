@@ -200,8 +200,8 @@ OLIST_INSIGHTS = [
     {
         "id": "1",
         "title": "São Paulo dominates with 42% of all orders",
-        "description": "Analysis of 99,441 orders shows São Paulo state accounts for 41,746 orders (42%) generating R$5.7M in revenue. The next largest state (Rio de Janeiro) has only 12,852 orders (13%). The Southeast region (SP, RJ, MG, ES) collectively represents 67% of total sales.",
-        "recommendation": "Focus marketing efforts on SP while developing expansion strategies for RJ and MG. Consider regional fulfillment centers in São Paulo to reduce delivery times and improve customer satisfaction scores.",
+        "description": "São Paulo leads with 41,746 orders and R$5.7M in revenue. The southeast region accounts for most sales.",
+        "recommendation": "Protect SP and test growth in RJ and MG.",
         "category": "Geographic Analysis",
         "impact": "high",
         "metric_value": "42% market share"
@@ -209,8 +209,8 @@ OLIST_INSIGHTS = [
     {
         "id": "2",
         "title": "Top 20% of customers generate 65% of total revenue",
-        "description": "RFM segmentation reveals 9,610 customers (10%) are 'Champions' contributing R$8.8M (65%) in revenue. These customers have an average order value of R$285 and purchase 4.2 times per year with 89% retention rate.",
-        "recommendation": "Launch VIP loyalty program with exclusive benefits, early access to sales, and personalized recommendations. Create targeted re-engagement campaigns for the 25% new customers within 30 days of first purchase.",
+        "description": "Champions make up 10% of customers but generate most of the revenue.",
+        "recommendation": "Prioritize loyalty work for high-value buyers and re-engage new customers early.",
         "category": "Customer Segmentation",
         "impact": "high",
         "metric_value": "65% revenue from 20%"
@@ -218,8 +218,8 @@ OLIST_INSIGHTS = [
     {
         "id": "3",
         "title": "Cart abandonment correlates with shipping costs above R$25",
-        "description": "Analysis shows 67% cart abandonment rate. Exit surveys indicate 45% of abandoners cite shipping costs. Average abandoned cart value is R$127, with free shipping threshold at R$150. Orders with shipping > R$25 have 78% higher abandonment.",
-        "recommendation": "Lower free shipping threshold to R$100 or implement dynamic shipping discounts. Test progress bar showing distance to free shipping. Consider absorbing partial shipping costs for orders > R$80.",
+        "description": "High shipping cost is linked to higher abandonment.",
+        "recommendation": "Test lower free-shipping thresholds and simpler shipping messages.",
         "category": "Conversion Optimization",
         "impact": "high",
         "metric_value": "67% abandonment rate"
@@ -227,8 +227,8 @@ OLIST_INSIGHTS = [
     {
         "id": "4",
         "title": "Average review score of 4.09 with 11.5% one-star reviews",
-        "description": "Customer satisfaction analysis shows 57.8% five-star reviews but 11.5% one-star ratings (11,436 orders). Main complaints: delivery delays (42%), product quality mismatch (31%), damaged packaging (18%), wrong items (9%).",
-        "recommendation": "Implement proactive delivery tracking with SMS/WhatsApp notifications. Add more detailed product photos and size guides. Create quality guarantee program and streamline return process for high-risk categories.",
+        "description": "Review scores are strong overall, but a small share of orders creates most complaints.",
+        "recommendation": "Focus on delivery tracking, clearer product details, and easier returns.",
         "category": "Customer Satisfaction",
         "impact": "high",
         "metric_value": "4.09 avg score"
@@ -237,8 +237,8 @@ OLIST_INSIGHTS = [
     {
         "id": "5",
         "title": "Credit card payments represent 74% of transactions",
-        "description": "76,795 orders (73.9%) were paid via credit card, totaling R$10.5M. Boleto (bank slip) is second at 19.1% (19,784 orders). Average installments for credit cards is 3.8 payments. Voucher usage is 5.6% primarily for repeat customers.",
-        "recommendation": "Optimize checkout for credit card users with saved cards and one-click payments. Consider offering 10% discount for boleto to improve cash flow. Expand voucher program to drive customer retention.",
+        "description": "Credit card is the main payment method, with boleto second.",
+        "recommendation": "Keep checkout fast for credit cards and test boleto incentives carefully.",
         "category": "Payment Analysis",
         "impact": "medium",
         "metric_value": "73.9% credit card"
@@ -246,8 +246,8 @@ OLIST_INSIGHTS = [
     {
         "id": "6",
         "title": "November shows highest revenue at R$1.02M (Black Friday effect)",
-        "description": "November 2017 recorded the highest monthly revenue (R$1,023,456) with 7,501 orders, a 21% increase from October. Black Friday week alone contributed 38% of November sales. December showed 14% decline post-holiday.",
-        "recommendation": "Prepare inventory and logistics 2 months before Black Friday. Create early-bird deals in October to spread order volume. Implement December retention campaigns targeting Black Friday buyers.",
+        "description": "Revenue peaks in November and eases after the holiday period.",
+        "recommendation": "Plan inventory and campaign timing before the peak.",
         "category": "Seasonal Analysis",
         "impact": "medium",
         "metric_value": "21% Nov increase"
@@ -255,8 +255,8 @@ OLIST_INSIGHTS = [
     {
         "id": "7",
         "title": "Bed, Bath & Table category leads with 11,115 sales",
-        "description": "Top category generates R$1.7M revenue from 11,115 orders (11.2% of total). Health & Beauty follows with 9,672 orders (R$1.5M). Top 5 categories represent 46% of sales but only 28% of product catalog.",
-        "recommendation": "Expand product range in top categories. Create bundle deals combining bed_bath_table with furniture_decor to increase AOV. Consider private label opportunities in high-margin categories.",
+        "description": "Bed, Bath & Table leads by order volume and revenue.",
+        "recommendation": "Keep inventory and bundles focused on the strongest categories.",
         "category": "Product Analysis",
         "impact": "medium",
         "metric_value": "R$1.7M revenue"
@@ -264,8 +264,8 @@ OLIST_INSIGHTS = [
     {
         "id": "8",
         "title": "Email marketing generates highest ROI at 4200%",
-        "description": "Email campaigns generate R$42 for every R$1 spent, outperforming paid social (320% ROI) and paid search (280% ROI). Personalized product recommendation emails have 3x higher click rates and 2.1x conversion.",
-        "recommendation": "Increase email marketing budget allocation from 15% to 25%. Implement data-driven product recommendations in all transactional emails. Create behavior-triggered email sequences for cart abandonment and browse abandonment.",
+        "description": "Email outperforms the other channels in return on spend.",
+        "recommendation": "Increase email investment and keep recommendations in every message.",
         "category": "Marketing Analysis",
         "impact": "medium",
         "metric_value": "4200% ROI"
@@ -274,8 +274,8 @@ OLIST_INSIGHTS = [
     {
         "id": "9",
         "title": "Mobile traffic represents 62% but only 48% of conversions",
-        "description": "Mobile devices account for 62% of site traffic but only 48% of completed purchases. Desktop conversion rate is 4.2% vs mobile at 2.8%. Average mobile session duration is 2.3 minutes vs 4.1 minutes on desktop.",
-        "recommendation": "Audit mobile checkout flow for friction points. Implement mobile-specific payment options like Apple Pay and Google Pay. Consider progressive web app (PWA) for better mobile experience.",
+        "description": "Mobile brings most traffic but converts below desktop.",
+        "recommendation": "Review the mobile checkout path and remove friction points.",
         "category": "Channel Analysis",
         "impact": "low",
         "metric_value": "62% mobile traffic"
@@ -283,8 +283,8 @@ OLIST_INSIGHTS = [
     {
         "id": "10",
         "title": "Average delivery time is 12.5 days with 8% late deliveries",
-        "description": "Mean delivery time is 12.5 days against promised 15 days. However, 8% of orders (7,955) were delivered late. States with highest late delivery rates: AM (23%), PA (19%), MT (17%). SP has lowest at 4%.",
-        "recommendation": "Partner with additional carriers for remote regions. Set realistic delivery expectations for Northern states. Consider regional inventory placement to reduce transit times for high-volume areas.",
+        "description": "Average delivery time is acceptable, but some regions are late more often.",
+        "recommendation": "Tighten carrier planning for the slower regions.",
         "category": "Logistics Analysis",
         "impact": "low",
         "metric_value": "8% late deliveries"

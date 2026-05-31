@@ -65,6 +65,11 @@ const CHART_COLORS = {
 };
 
 const PIE_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4'];
+const DEFAULT_START_INDEX = 0;
+const DEFAULT_END_INDEX = FALLBACK_REVENUE_DATA.length - 1;
+
+const formatPeriodLabel = (item) => `${item.month} ${String(item.year).slice(-2)}`;
+const formatPercentChange = (value) => `${value >= 0 ? '+' : ''}${Math.abs(value).toFixed(2)}%`;
 
 const KPICard = ({ title, value, change, icon: Icon, loading, prefix = '' }) => {
     const isPositive = change >= 0;
@@ -98,7 +103,7 @@ const KPICard = ({ title, value, change, icon: Icon, loading, prefix = '' }) => 
                         <TrendDown size={16} weight="bold" className="text-red-500" />
                     )}
                     <span className={`text-sm font-medium ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                        {isPositive ? '+' : ''}{change}%
+                        {formatPercentChange(change)}
                     </span>
                     <span className="text-sm text-muted-foreground ml-1">vs last period</span>
                 </div>
@@ -208,6 +213,9 @@ export default function Dashboard() {
     const [paymentsData, setPaymentsData] = useState(FALLBACK_PAYMENTS_DATA);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [startIndex, setStartIndex] = useState(DEFAULT_START_INDEX);
+    const [endIndex, setEndIndex] = useState(DEFAULT_END_INDEX);
+    const [comparisonMode, setComparisonMode] = useState('previous-window');
 
     const normalizeStateCode = (value) => String(value || '').trim().toUpperCase();
     const normalizeStateValue = (value) => {
@@ -218,8 +226,6 @@ export default function Dashboard() {
         return normalized || 'all';
     };
     
-    // Filters
-    const [year, setYear] = useState('all');
     const [state, setState] = useState('all');
     useEffect(() => {
         let mounted = true;
@@ -280,14 +286,13 @@ export default function Dashboard() {
     }, []);
 
 
-    // Filter revenue data when year changes
+    const normalizedStartIndex = Math.min(startIndex, endIndex);
+    const normalizedEndIndex = Math.max(startIndex, endIndex);
+
+    // Filter revenue data when the selected time window changes
     useEffect(() => {
-        if (year === 'all') {
-            setFilteredRevenueData(revenueData);
-        } else {
-            setFilteredRevenueData(revenueData.filter(d => d.year === parseInt(year)));
-        }
-    }, [year, revenueData]);
+        setFilteredRevenueData(revenueData.slice(normalizedStartIndex, normalizedEndIndex + 1));
+    }, [normalizedStartIndex, normalizedEndIndex, revenueData]);
 
     // Filter states data when state changes
     useEffect(() => {
@@ -301,8 +306,24 @@ export default function Dashboard() {
 
     const revenueChartData = filteredRevenueData.map((d) => ({
         ...d,
-        period: `${d.month} ${String(d.year).slice(-2)}`,
+        period: formatPeriodLabel(d),
     }));
+
+    const comparisonWindowSize = filteredRevenueData.length;
+    const previousWindowEndIndex = normalizedStartIndex - 1;
+    const previousWindowStartIndex = Math.max(0, previousWindowEndIndex - comparisonWindowSize + 1);
+    const comparisonRevenueData = comparisonMode === 'previous-window' && previousWindowEndIndex >= 0
+        ? revenueData.slice(previousWindowStartIndex, previousWindowEndIndex + 1)
+        : [];
+
+    const hasComparison = comparisonMode === 'previous-window' && comparisonRevenueData.length > 0 && state === 'all';
+
+    const currentRevenue = filteredRevenueData.reduce((sum, item) => sum + item.revenue, 0);
+    const currentOrders = filteredRevenueData.reduce((sum, item) => sum + item.orders, 0);
+    const comparisonRevenue = comparisonRevenueData.reduce((sum, item) => sum + item.revenue, 0);
+    const comparisonOrders = comparisonRevenueData.reduce((sum, item) => sum + item.orders, 0);
+    const revenueChange = hasComparison && comparisonRevenue > 0 ? ((currentRevenue - comparisonRevenue) / comparisonRevenue) * 100 : undefined;
+    const ordersChange = hasComparison && comparisonOrders > 0 ? ((currentOrders - comparisonOrders) / comparisonOrders) * 100 : undefined;
 
     const stateOptions = Array.from(
         new Map(
@@ -311,6 +332,10 @@ export default function Dashboard() {
     )
         .filter(([code]) => code && code !== 'ALL')
         .sort((a, b) => a[1].localeCompare(b[1]));
+
+    const selectedStateSummary = state === 'all'
+        ? null
+        : statesData.find((item) => normalizeStateCode(item.state) === normalizeStateCode(state));
 
     const downloadCsv = (rows, headers, filename) => {
         let csvContent = headers.join(',') + '\n';
@@ -355,15 +380,8 @@ export default function Dashboard() {
     // Calculate filtered KPIs based on year
     const getFilteredKPIs = () => {
         if (!kpis) return null;
-        
-        if (year === 'all') {
-            return kpis;
-        }
-        
-        // Calculate totals for filtered year
-        const yearData = revenueData.filter(d => d.year === parseInt(year));
-        const totalRevenue = yearData.reduce((sum, d) => sum + d.revenue, 0);
-        const totalOrders = yearData.reduce((sum, d) => sum + d.orders, 0);
+        const totalRevenue = filteredRevenueData.reduce((sum, d) => sum + d.revenue, 0);
+        const totalOrders = filteredRevenueData.reduce((sum, d) => sum + d.orders, 0);
         
         return {
             ...kpis,
@@ -374,6 +392,15 @@ export default function Dashboard() {
     };
 
     const displayKpis = getFilteredKPIs();
+
+    const dashboardSummary = state === 'all' || !selectedStateSummary
+        ? displayKpis
+        : {
+            ...displayKpis,
+            total_revenue: selectedStateSummary.revenue,
+            total_orders: selectedStateSummary.sales,
+            total_customers: selectedStateSummary.customers,
+        };
 
     return (
         <div className="page-container">
@@ -389,6 +416,9 @@ export default function Dashboard() {
                     <div>
                         <p className="section-label mb-2">Olist Dataset Analytics</p>
                         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+                        <p className="text-sm text-muted-foreground mt-2 max-w-2xl">
+                            Use the period controls to compare windows, then drill into a state or product group when a chart points to a question.
+                        </p>
                     </div>
                     <Button 
                         variant="outline" 
@@ -407,14 +437,37 @@ export default function Dashboard() {
                         <Funnel size={18} className="text-muted-foreground" />
                         <span className="text-sm font-medium">Filters:</span>
                     </div>
-                    <Select value={year} onValueChange={setYear}>
-                        <SelectTrigger className="w-[140px]" data-testid="filter-year">
-                            <SelectValue placeholder="Year" />
+                    <Select value={String(normalizedStartIndex)} onValueChange={(value) => setStartIndex(Number(value))}>
+                        <SelectTrigger className="w-[170px]" data-testid="filter-start-period">
+                            <SelectValue placeholder="Start period" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Years</SelectItem>
-                            <SelectItem value="2017">2017</SelectItem>
-                            <SelectItem value="2018">2018</SelectItem>
+                            {revenueData.map((item, index) => (
+                                <SelectItem key={`start-${item.month}-${item.year}`} value={String(index)}>
+                                    {formatPeriodLabel(item)}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <Select value={String(normalizedEndIndex)} onValueChange={(value) => setEndIndex(Number(value))}>
+                        <SelectTrigger className="w-[170px]" data-testid="filter-end-period">
+                            <SelectValue placeholder="End period" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {revenueData.map((item, index) => (
+                                <SelectItem key={`end-${item.month}-${item.year}`} value={String(index)}>
+                                    {formatPeriodLabel(item)}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <Select value={comparisonMode} onValueChange={setComparisonMode}>
+                        <SelectTrigger className="w-[180px]" data-testid="filter-comparison-mode">
+                            <SelectValue placeholder="Comparison" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="previous-window">Previous window</SelectItem>
+                            <SelectItem value="none">No comparison</SelectItem>
                         </SelectContent>
                     </Select>
                     <Select value={state} onValueChange={(value) => setState(normalizeStateValue(value))}>
@@ -430,11 +483,11 @@ export default function Dashboard() {
                             ))}
                         </SelectContent>
                     </Select>
-                    {(year !== 'all' || state !== 'all') && (
+                    {(normalizedStartIndex !== DEFAULT_START_INDEX || normalizedEndIndex !== DEFAULT_END_INDEX || state !== 'all') && (
                         <Button 
                             variant="ghost" 
                             size="sm"
-                            onClick={() => { setYear('all'); setState('all'); }}
+                            onClick={() => { setStartIndex(DEFAULT_START_INDEX); setEndIndex(DEFAULT_END_INDEX); setState('all'); setComparisonMode('previous-window'); }}
                             className="text-muted-foreground"
                         >
                             Clear Filters
@@ -442,48 +495,63 @@ export default function Dashboard() {
                     )}
                 </div>
 
-                {/* Active Filter Indicator */}
-                {(year !== 'all' || state !== 'all') && (
-                    <div className="mb-4 p-3 bg-primary/5 border border-primary/20 rounded-md">
-                        <p className="text-sm text-primary font-medium">
-                            Showing data for: {year !== 'all' ? year : 'All Years'}
-                            {state !== 'all' && ` • ${statesData.find(s => normalizeStateCode(s.state) === normalizeStateCode(state))?.state_name || state}`}
+                {/* Decision Callout */}
+                <div className="mb-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div className="p-4 bg-primary/5 border border-primary/20 rounded-md lg:col-span-2">
+                        <p className="text-sm text-primary font-medium mb-1">
+                            Period selected: {formatPeriodLabel(revenueData[normalizedStartIndex])} to {formatPeriodLabel(revenueData[normalizedEndIndex])}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                            {state !== 'all'
+                                ? `State filter active: ${selectedStateSummary?.state_name || normalizeStateCode(state)}. Comparison is hidden while a single state is selected.`
+                                : hasComparison
+                                ? `Compared with the previous ${comparisonRevenueData.length} periods, revenue is ${revenueChange >= 0 ? 'up' : 'down'} ${Math.abs(revenueChange || 0).toFixed(2)}% and orders are ${ordersChange >= 0 ? 'up' : 'down'} ${Math.abs(ordersChange || 0).toFixed(2)}%.`
+                                : 'Use the selected window to isolate a demand pattern, then drill into a state or category to decide where the change is coming from.'}
                         </p>
                     </div>
-                )}
+                    <div className="p-4 bg-card border border-border rounded-md">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Drill down quickly</p>
+                        <div className="flex flex-wrap gap-2">
+                            {stateOptions.slice(0, 4).map(([code, name]) => (
+                                <Button key={code} variant="outline" size="sm" onClick={() => setState(code)}>
+                                    {name}
+                                </Button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
 
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     <KPICard
                         title="Total Revenue"
-                        value={displayKpis ? formatCurrency(displayKpis.total_revenue) : '-'}
-                        change={year === 'all' ? displayKpis?.revenue_growth : undefined}
+                        value={dashboardSummary ? formatCurrency(dashboardSummary.total_revenue) : '-'}
+                        change={revenueChange}
                         icon={CurrencyDollar}
                         loading={loading}
                     />
                     <KPICard
                         title="Total Orders"
-                        value={displayKpis ? displayKpis.total_orders.toLocaleString() : '-'}
-                        change={year === 'all' ? displayKpis?.orders_growth : undefined}
+                        value={dashboardSummary ? dashboardSummary.total_orders.toLocaleString() : '-'}
+                        change={ordersChange}
                         icon={ShoppingCart}
                         loading={loading}
                     />
                     <KPICard
                         title="Customers"
-                        value={displayKpis ? displayKpis.total_customers.toLocaleString() : '-'}
-                        change={year === 'all' ? displayKpis?.customers_growth : undefined}
+                        value={dashboardSummary ? dashboardSummary.total_customers.toLocaleString() : '-'}
                         icon={Users}
                         loading={loading}
                     />
                     <KPICard
                         title="Avg Review"
-                        value={displayKpis ? displayKpis.avg_review_score.toFixed(2) : '-'}
+                        value={dashboardSummary ? dashboardSummary.avg_review_score.toFixed(2) : '-'}
                         icon={Star}
                         loading={loading}
                     />
                     <KPICard
                         title="Sellers"
-                        value={displayKpis ? displayKpis.total_sellers.toLocaleString() : '-'}
+                        value={dashboardSummary ? dashboardSummary.total_sellers.toLocaleString() : '-'}
                         icon={Storefront}
                         loading={loading}
                     />
@@ -493,12 +561,12 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     {/* Revenue Over Time */}
                     <div className="border border-border rounded-md p-6 bg-card" data-testid="chart-revenue">
-                        <h3 className="font-semibold mb-1">Revenue Over Time</h3>
+                        <h3 className="font-semibold mb-1">Revenue over selected period</h3>
                         <p className="text-sm text-muted-foreground mb-4">
-                            Monthly revenue {year !== 'all' ? `for ${year}` : '(2017-2018)'}
+                            Monthly revenue in the selected window. Use this chart to decide whether volume is growing, flattening, or reversing.
                             {filteredRevenueData.length > 0 && (
                                 <span className="ml-2 text-primary font-mono">
-                                    Total: R$ {filteredRevenueData.reduce((sum, d) => sum + d.revenue, 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                    Total: R$ {currentRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                                 </span>
                             )}
                         </p>
@@ -548,7 +616,7 @@ export default function Dashboard() {
                     {/* Top Categories */}
                     <div className="border border-border rounded-md p-6 bg-card" data-testid="chart-products">
                         <h3 className="font-semibold mb-1">Top Product Categories</h3>
-                        <p className="text-sm text-muted-foreground mb-4">Best performing categories by order count</p>
+                        <p className="text-sm text-muted-foreground mb-4">Best performing categories by order count. Use this chart to decide where inventory and promotion effort should stay focused.</p>
                         {loading ? (
                             <Skeleton className="h-[300px] w-full" />
                         ) : (
@@ -589,7 +657,7 @@ export default function Dashboard() {
                     <div className="border border-border rounded-md p-6 bg-card" data-testid="chart-states">
                         <h3 className="font-semibold mb-1">Sales by State</h3>
                         <p className="text-sm text-muted-foreground mb-4">
-                            Revenue distribution {state !== 'all' ? `- ${statesData.find(s => s.state === state)?.state_name}` : 'across Brazilian states'}
+                            Revenue distribution {state !== 'all' ? `- ${statesData.find(s => s.state === state)?.state_name}` : 'across Brazilian states'}. Select a state above or click the quick drill-down buttons.
                         </p>
                         {loading ? (
                             <Skeleton className="h-[300px] w-full" />
@@ -626,7 +694,7 @@ export default function Dashboard() {
                     {/* Customer Segmentation */}
                     <div className="border border-border rounded-md p-6 bg-card" data-testid="chart-segments">
                         <h3 className="font-semibold mb-1">Customer Segmentation (RFM)</h3>
-                        <p className="text-sm text-muted-foreground mb-4">Distribution by customer value tier</p>
+                        <p className="text-sm text-muted-foreground mb-4">Distribution by customer value tier. This shows where retention work should start.</p>
                         {loading ? (
                             <Skeleton className="h-[300px] w-full" />
                         ) : (
@@ -677,7 +745,7 @@ export default function Dashboard() {
                 {/* Payment Methods */}
                 <div className="border border-border rounded-md p-6 bg-card" data-testid="chart-payments">
                     <h3 className="font-semibold mb-1">Payment Methods</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Distribution of payment types used by customers</p>
+                    <p className="text-sm text-muted-foreground mb-4">Distribution of payment types used by customers. This helps decide whether checkout changes are worth testing.</p>
                     {loading ? (
                         <Skeleton className="h-[100px] w-full" />
                     ) : (
@@ -698,6 +766,25 @@ export default function Dashboard() {
                             ))}
                         </div>
                     )}
+                </div>
+
+                {/* Performer Callouts */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                    <div className="border border-border rounded-md p-5 bg-card">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Top product</p>
+                        <p className="font-semibold mb-1">{productsData[0]?.category?.replace(/_/g, ' ') || 'N/A'}</p>
+                        <p className="text-sm text-muted-foreground">Use this as the anchor category for inventory and bundle planning.</p>
+                    </div>
+                    <div className="border border-border rounded-md p-5 bg-card">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Strongest state</p>
+                        <p className="font-semibold mb-1">{statesData[0]?.state_name || 'N/A'}</p>
+                        <p className="text-sm text-muted-foreground">This market should be protected before expansion is pushed elsewhere.</p>
+                    </div>
+                    <div className="border border-border rounded-md p-5 bg-card">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Decision prompt</p>
+                        <p className="font-semibold mb-1">What should be changed next?</p>
+                        <p className="text-sm text-muted-foreground">Retention, seasonal planning, or regional concentration are the most useful next questions.</p>
+                    </div>
                 </div>
             </div>
         </div>
