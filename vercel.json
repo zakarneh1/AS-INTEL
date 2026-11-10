@@ -12,6 +12,10 @@
   ],
   "routes": [
     {
+      "src": "^/(robots\\.txt|sitemap\\.xml)$",
+      "dest": "/$1"
+    },
+    {
       "src": "^/static/(.*)",
       "dest": "/static/$1",
       "headers": {
